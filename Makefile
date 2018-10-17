@@ -89,7 +89,7 @@ MDMON_DIR = $(RUN_DIR)
 # place for autoreplace cookies
 FAILED_SLOTS_DIR = $(RUN_DIR)/failed-slots
 SYSTEMD_DIR=/lib/systemd/system
-LIB_DIR=/usr/libexec/mdadm
+LIB_DIR=/usr/lib/mdadm
 
 COROSYNC:=$(shell [ -d /usr/include/corosync ] || echo -DNO_COROSYNC)
 DLM:=$(shell [ -f /usr/include/libdlm.h ] || echo -DNO_DLM)
