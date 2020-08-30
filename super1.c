@@ -958,8 +958,25 @@ static int examine_badblocks_super1(struct supertype *st, int fd, char *devname)
 static int match_home1(struct supertype *st, char *homehost)
 {
 	struct mdp_superblock_1 *sb = st->sb;
-	int l = homehost ? strlen(homehost) : 0;
+	char *dell_softraid_header = "VirtualDisk";
+	int l = strlen(dell_softraid_header);
 
+	/*
+	 * Dell softraid FW uses homehost in md raid superblock to store
+	 * its virtual disk name e.g. "VirtualDisk01". The improper usage
+	 * of md raid super block meta data from Dell softraid S150 utility
+	 * makes mdadm takes such md raid (Dell softraid Virtual Disk) as
+	 * foreign array and won't automatically assemble this array by
+	 * default. Here if an array's homehost name starts with "VirtualDisk"
+	 * then we take it as a Dell software raid and bypass the set_name
+	 * checking. This workaround makes current Dell software raid array
+	 * can be treated as local array and start automatically.
+	 */
+	if (strncmp(sb->set_name, dell_softraid_header, l) == 0)
+		return 1;
+
+	/* Normal cases handleing */
+	l = homehost ? strlen(homehost) : 0;
 	return (l > 0 && l < 32 && sb->set_name[l] == ':' &&
 		strncmp(sb->set_name, homehost, l) == 0);
 }
