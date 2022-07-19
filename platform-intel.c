@@ -656,6 +656,7 @@ static const struct imsm_orom *find_imsm_hba_orom(struct sys_dev *hba)
 #define RST_VMD_PROP "RstVmdV"
 
 #define PCI_CLASS_RAID_CNTRL 0x010400
+#define PCI_CLASS_SATA_HBA 0x010601
 
 /* GUID length in Bytes */
 #define GUID_LENGTH 16
@@ -1049,7 +1050,8 @@ const struct imsm_orom *find_imsm_efi(struct sys_dev *hba)
 			break;
 		return NULL;
 	case SYS_DEV_SATA:
-		if (hba->class != PCI_CLASS_RAID_CNTRL)
+		if (hba->class != PCI_CLASS_RAID_CNTRL &&
+		    hba->class != PCI_CLASS_SATA_HBA)
 			return NULL;
 
 		if (find_imsm_efi_orom(&orom, hba->type))
