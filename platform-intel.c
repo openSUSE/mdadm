@@ -523,6 +523,7 @@ static const struct imsm_orom *find_imsm_hba_orom(struct sys_dev *hba)
 #define AHCI_PROP "RstSataV"
 #define AHCI_SSATA_PROP "RstsSatV"
 #define AHCI_TSATA_PROP "RsttSatV"
+#define AHCI_RST_PROP "RstVmdV"
 #define VROC_VMD_PROP "RstUefiV"
 #define RST_VMD_PROP "RstVmdV"
 
@@ -530,6 +531,7 @@ static const struct imsm_orom *find_imsm_hba_orom(struct sys_dev *hba)
 	EFI_GUID(0x193dfefa, 0xa445, 0x4302, 0x99, 0xd8, 0xef, 0x3a, 0xad, 0x1a, 0x04, 0xc6)
 
 #define PCI_CLASS_RAID_CNTRL 0x010400
+#define PCI_CLASS_SATA_HBA 0x010601
 
 static int read_efi_var(void *buffer, ssize_t buf_size,
 			const char *variable_name, struct efi_guid guid)
@@ -616,7 +618,8 @@ const struct imsm_orom *find_imsm_efi(struct sys_dev *hba)
 	struct imsm_orom orom;
 	struct orom_entry *ret;
 	static const char * const sata_efivars[] = {AHCI_PROP, AHCI_SSATA_PROP,
-						    AHCI_TSATA_PROP};
+						    AHCI_TSATA_PROP,
+						    AHCI_RST_PROP};
 	static const char * const vmd_efivars[] = {VROC_VMD_PROP, RST_VMD_PROP};
 	unsigned long i;
 
@@ -635,7 +638,8 @@ const struct imsm_orom *find_imsm_efi(struct sys_dev *hba)
 
 		return NULL;
 	case SYS_DEV_SATA:
-		if (hba->class != PCI_CLASS_RAID_CNTRL)
+		if (hba->class != PCI_CLASS_RAID_CNTRL &&
+		    hba->class != PCI_CLASS_SATA_HBA)
 			return NULL;
 
 		for (i = 0; i < ARRAY_SIZE(sata_efivars); i++) {
