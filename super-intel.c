@@ -2259,7 +2259,7 @@ static void examine_super_imsm(struct supertype *st, char *homehost)
 	else
 		printf("not supported\n");
 	getinfo_super_imsm(st, &info, NULL);
-	fname_from_uuid(st, &info, nbuf, ':');
+	fname_from_uuid(&info, nbuf);
 	printf("           UUID : %s\n", nbuf + 5);
 	sum = __le32_to_cpu(mpb->check_sum);
 	printf("       Checksum : %08x %s\n", sum,
@@ -2284,7 +2284,7 @@ static void examine_super_imsm(struct supertype *st, char *homehost)
 
 		super->current_vol = i;
 		getinfo_super_imsm(st, &info, NULL);
-		fname_from_uuid(st, &info, nbuf, ':');
+		fname_from_uuid(&info, nbuf);
 		print_imsm_dev(super, dev, nbuf + 5, super->disks->index);
 	}
 	for (i = 0; i < mpb->num_disks; i++) {
@@ -2309,7 +2309,7 @@ static void brief_examine_super_imsm(struct supertype *st, int verbose)
 	char nbuf[64];
 
 	getinfo_super_imsm(st, &info, NULL);
-	fname_from_uuid(st, &info, nbuf, ':');
+	fname_from_uuid(&info, nbuf);
 	printf("ARRAY metadata=imsm UUID=%s\n", nbuf + 5);
 }
 
@@ -2326,13 +2326,13 @@ static void brief_examine_subarrays_imsm(struct supertype *st, int verbose)
 		return;
 
 	getinfo_super_imsm(st, &info, NULL);
-	fname_from_uuid(st, &info, nbuf, ':');
+	fname_from_uuid(&info, nbuf);
 	for (i = 0; i < super->anchor->num_raid_devs; i++) {
 		struct imsm_dev *dev = get_imsm_dev(super, i);
 
 		super->current_vol = i;
 		getinfo_super_imsm(st, &info, NULL);
-		fname_from_uuid(st, &info, nbuf1, ':');
+		fname_from_uuid(&info, nbuf1);
 		printf("ARRAY " DEV_MD_DIR "%.16s container=%s member=%d UUID=%s\n",
 		       dev->volume, nbuf + 5, i, nbuf1 + 5);
 	}
@@ -2346,7 +2346,7 @@ static void export_examine_super_imsm(struct supertype *st)
 	char nbuf[64];
 
 	getinfo_super_imsm(st, &info, NULL);
-	fname_from_uuid(st, &info, nbuf, ':');
+	fname_from_uuid(&info, nbuf);
 	printf("MD_METADATA=imsm\n");
 	printf("MD_LEVEL=container\n");
 	printf("MD_UUID=%s\n", nbuf+5);
@@ -2366,7 +2366,7 @@ static void detail_super_imsm(struct supertype *st, char *homehost,
 		super->current_vol = strtoul(subarray, NULL, 10);
 
 	getinfo_super_imsm(st, &info, NULL);
-	fname_from_uuid(st, &info, nbuf, ':');
+	fname_from_uuid(&info, nbuf);
 	printf("\n              UUID : %s\n", nbuf + 5);
 
 	super->current_vol = temp_vol;
@@ -2383,7 +2383,7 @@ static void brief_detail_super_imsm(struct supertype *st, char *subarray)
 		super->current_vol = strtoul(subarray, NULL, 10);
 
 	getinfo_super_imsm(st, &info, NULL);
-	fname_from_uuid(st, &info, nbuf, ':');
+	fname_from_uuid(&info, nbuf);
 	printf(" UUID=%s", nbuf + 5);
 
 	super->current_vol = temp_vol;
