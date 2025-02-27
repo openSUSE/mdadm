@@ -90,6 +90,7 @@
 				   * dire need
 				   */
 #define	MD_DISK_FAILFAST	10 /* Fewer retries, more failures */
+#define	MD_DISK_TIMEOUT		11 /* disk is faulty due to timeout */
 
 #define MD_DISK_REPLACEMENT	17
 #define MD_DISK_JOURNAL		18 /* disk is used as the write journal in RAID-5/6 */
