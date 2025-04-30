@@ -993,7 +993,8 @@ static bool is_devname_numbered(const char *devname, const char *pref, const int
 	if (parse_num(&val, devname + pref_len) != 0)
 		return false;
 
-	if (val > 127)
+	/* Allow any number that represents a valid minor number */
+	if (val >= (1 << 20))
 		return false;
 
 	return true;
