@@ -11,7 +11,7 @@ ConditionPathExistsGlob=/var/lib/mdcheck/MD_UUID_*
 Documentation=man:mdadm(8)
 
 [Service]
-Type=oneshot
+Type=simple
 Environment="MDADM_CHECK_DURATION=6 hours"
 EnvironmentFile=-/run/sysconfig/mdadm
 ExecStartPre=-/usr/libexec/mdadm/mdadm_env.sh
