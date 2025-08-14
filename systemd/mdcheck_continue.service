@@ -7,7 +7,6 @@
 
 [Unit]
 Description=MD array scrubbing - continuation
-ConditionPathExistsGlob=/var/lib/mdcheck/MD_UUID_*
 Documentation=man:mdadm(8)
 
 [Service]
@@ -15,4 +14,7 @@ Type=simple
 Environment="MDADM_CHECK_DURATION=6 hours"
 EnvironmentFile=-/run/sysconfig/mdadm
 ExecStartPre=-/usr/libexec/mdadm/mdadm_env.sh
-ExecStart=/usr/share/mdadm/mdcheck --continue --duration ${MDADM_CHECK_DURATION}
+# Note that we're not calling "mdcheck --continue" here.
+# We want previously started checks to be continued, and new ones
+# to be started.
+ExecStart=/usr/share/mdadm/mdcheck --duration ${MDADM_CHECK_DURATION}
