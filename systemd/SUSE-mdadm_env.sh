@@ -31,6 +31,11 @@ else
   MDADM_SCAN=""
 fi
 
+if [ x$MDADM_SCAN != x ] && [ x$MDADM_RAIDDEVICES != x ]; then
+    echo "$0: WARNING: MDADM_SCAN is set, ignoring MDADM_RAIDDEVICES" >&2
+    MDADM_RAIDDEVICES=
+fi
+
 if [ x$MDADM_SEND_MAIL_ON_START = x"yes" ]; then
   MDADM_SEND_MAIL="-t"
 else
