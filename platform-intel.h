@@ -22,9 +22,16 @@
 /* according to GUID format: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" */
 #define GUID_STR_MAX	37
 
+#if (defined(__GNUC__) && __GNUC__ >= 8) || \
+	(defined(__clang_major__) && __clang_major__ >= 21)
+#define __nonstring__ __attribute__((nonstring))
+#else
+#define __nonstring__ /* empty */
+#endif
+
 /* The IMSM Capability (IMSM AHCI and ISCU OROM/EFI variable) Version Table definition */
 struct imsm_orom {
-	__u8 signature[4] __attribute__((nonstring));
+	__u8 signature[4] __nonstring__;
 	#define IMSM_OROM_SIGNATURE "$VER"
 	#define IMSM_NVME_OROM_COMPAT_SIGNATURE "$NVM"
 	#define IMSM_VMD_OROM_COMPAT_SIGNATURE "$VMD"
