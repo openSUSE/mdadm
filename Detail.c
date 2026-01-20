@@ -98,7 +98,6 @@ int Detail(char *dev, struct context *c)
 	int max_devices = 0, n_devices = 0;
 	int spares = 0;
 	struct stat stb;
-	int failed = 0;
 	struct supertype *st = NULL;
 	char *subarray = NULL;
 	int max_disks = MD_SB_DISKS; /* just a default */
@@ -749,12 +748,8 @@ int Detail(char *dev, struct context *c)
 				       disk.raid_disk);
 		}
 		if (!c->brief && array.raid_disks) {
-			if (disk.state & (1 << MD_DISK_FAULTY)) {
+			if (disk.state & (1 << MD_DISK_FAULTY))
 				printf(" faulty");
-				if (disk.raid_disk < array.raid_disks &&
-				    disk.raid_disk >= 0)
-					failed++;
-			}
 			if (disk.state & (1<<MD_DISK_TIMEOUT))
 				printf(" timeout");
 			if (disk.state & (1 << MD_DISK_ACTIVE))
