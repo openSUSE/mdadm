@@ -28,6 +28,15 @@
 #include	<ctype.h>
 #include	<dirent.h>
 
+/*
+ * SUSE downstream patch (bsc#763402)
+ * Kernel: patches.suse/md-display-timeout-error.patch
+ * Since mdadm 4.5, mdadm includes the kernel headers directly,
+ * So the definition in md_p.h from ee41a6d ("mdadm -D: display timeout status")
+ * is not effective. Just add it here, it isn't referenced anywhere else.
+ */
+#define	MD_DISK_TIMEOUT		11 /* disk is faulty due to timeout */
+
 static int cmpstringp(const void *p1, const void *p2)
 {
 	return strcmp(* (char * const *) p1, * (char * const *) p2);
