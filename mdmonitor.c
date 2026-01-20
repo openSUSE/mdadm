@@ -23,8 +23,6 @@
  */
 
 #include	"mdadm.h"
-#include	"md_p.h"
-#include	"md_u.h"
 #include	"udev.h"
 #include	"xmalloc.h"
 
@@ -256,12 +254,14 @@ int Monitor(struct mddev_dev *devlist,
 				continue;
 			if (is_devname_ignore(mdlist->devname) == true)
 				continue;
-			if (!is_mddev(mdlist->devname))
-				continue;
 
 			st = xcalloc(1, sizeof *st);
-			snprintf(st->devname, MD_NAME_MAX + sizeof(DEV_MD_DIR), DEV_MD_DIR "%s",
-				 basename(mdlist->devname));
+			snprintf(st->devname, sizeof(st->devname), "%s%s",
+				 '/' == *mdlist->devname ? "" : DEV_MD_DIR, mdlist->devname);
+			if (!is_mddev(st->devname)) {
+				free(st);
+				continue;
+			}
 			st->next = statelist;
 			st->devnm[0] = 0;
 			st->percent = RESYNC_UNKNOWN;

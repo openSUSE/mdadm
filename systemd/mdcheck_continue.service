@@ -16,4 +16,4 @@ EnvironmentFile=-/run/sysconfig/mdadm
 ExecStartPre=-/usr/libexec/mdadm/mdadm_env.sh
 # mdcheck --start will continues previously started checks, and starts from
 # zero for arrays without a "Checked_$UUID" marker in /var/lib/mdcheck
-ExecStart=/usr/share/mdadm/mdcheck --start --duration ${MDADM_CHECK_DURATION}
+ExecStart=MISCDIR/mdcheck --start --duration ${MDADM_CHECK_DURATION}
