@@ -377,7 +377,8 @@ int Grow_addbitmap(char *devname, int fd, struct context *c, struct shape *s)
 		free(mdi);
 	}
 
-	if (s->btype == BitmapInternal || s->btype == BitmapCluster) {
+	if (s->btype == BitmapInternal || s->btype == BitmapCluster ||
+	    s->btype == BitmapLockless) {
 		int rv;
 		int d;
 		int offset_setable = 0;
@@ -419,7 +420,7 @@ int Grow_addbitmap(char *devname, int fd, struct context *c, struct shape *s)
 				rv = st->ss->add_internal_bitmap(
 					st, &s->bitmap_chunk, c->delay,
 					s->write_behind, bitmapsize,
-					offset_setable, major);
+					offset_setable, major, 0);
 				if (!rv) {
 					st->ss->write_bitmap(st, fd2,
 							     NodeNumUpdate);
@@ -2984,7 +2985,7 @@ static int impose_level(int fd, int level, char *devname, int verbose)
 	return 0;
 }
 
-int sigterm = 0;
+volatile sig_atomic_t sigterm = 0;
 static void catch_term(int sig)
 {
 	sigterm = 1;

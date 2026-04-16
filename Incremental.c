@@ -554,6 +554,40 @@ int Incremental(struct mddev_dev *devlist, struct context *c,
 			if (d->disk.state & (1<<MD_DISK_REMOVED))
 				remove_disk(mdfd, st, sra, d);
 
+		if (st->ss->get_bitmap_type) {
+			if (st->sb == NULL) {
+				dfd = dev_open(devname, O_RDONLY);
+				if (dfd < 0) {
+					rv = 1;
+					goto out;
+				}
+
+				rv = st->ss->load_super(st, dfd, NULL);
+				close(dfd);
+				dfd = -1;
+				if (rv) {
+					pr_err("load super failed %d\n", rv);
+					goto out;
+				}
+			}
+
+			if (st->ss->get_bitmap_type(st) == BITMAP_MAJOR_LOCKLESS) {
+				if (sra == NULL) {
+					sra = sysfs_read(mdfd, NULL, (GET_DEVS | GET_STATE |
+								    GET_OFFSET | GET_SIZE));
+					if (!sra) {
+						pr_err("can't read mdinfo\n");
+						rv = 1;
+						goto out;
+					}
+				}
+
+				rv = sysfs_set_str(sra, NULL, "bitmap_type", "llbitmap");
+				if (rv)
+					goto out;
+			}
+		}
+
 		if ((sra == NULL || active_disks >= info.array.working_disks) &&
 		    trustworthy != FOREIGN)
 			rv = ioctl(mdfd, RUN_ARRAY, NULL);
@@ -1494,6 +1528,7 @@ static int Incremental_container(struct supertype *st, char *devname,
 	for (ra = list ; ra ; ra = ra->next) {
 		int mdfd = -1;
 		char chosen_name[1024];
+		char *sysname;
 		struct map_ent *mp;
 		struct mddev_ident *match = NULL;
 
@@ -1586,6 +1621,8 @@ static int Incremental_container(struct supertype *st, char *devname,
 					   chosen_name, &result);
 		map_free(map);
 		map = NULL;
+		sysname = fd2devnm(mdfd);
+		strncpy(info.sys_name, sysname, sizeof(sysname) - 1);
 		close_fd(&mdfd);
 		udev_unblock();
 		sysfs_uevent(&info, "change");
